@@ -133,13 +133,17 @@ public class UpiIndiaPlugin implements FlutterPlugin, MethodCallHandler, Activit
     private void startTransaction(MethodCall call){
         resultReturned = false;
         String app;
+        Boolean appSupplied = true;
 
         // Extract the arguments.
-        if (call.argument("app") == null) {
-            app = "in.org.npci.upiapp";
-        } else {
+        try {
             app = call.argument("app");
+
+        } catch (Exception e) {
+            app = "in.org.npci.upiapp";
+            appSupplied = false;
         }
+
         String receiverUpiId = call.argument("receiverUpiId");
         String receiverName = call.argument("receiverName");
         String transactionRefId = call.argument("transactionRefId");
@@ -167,14 +171,17 @@ public class UpiIndiaPlugin implements FlutterPlugin, MethodCallHandler, Activit
             // Built Query. Ready to call intent.
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(uri);
-            intent.setPackage(app);
+            if (appSupplied) {
+                intent.setPackage(app);
+            }
 
-            if (isAppInstalled(app)) {
+            try {
                 activity.startActivityForResult(intent, uniqueRequestCode);
-            } else {
-                Log.d(TAG, app + " not installed on the device.");
+
+            } catch (Exception e) {
+                // Log.d(TAG, app + " not installed on the device.");
                 resultReturned = true;
-                finalResult.error("app_not_installed", "Requested app not installed", null);
+                finalResult.error("app_not_installed", "Requested app not installed " + e.toString(), null);
             }
         } catch (Exception ex) {
             resultReturned = true;

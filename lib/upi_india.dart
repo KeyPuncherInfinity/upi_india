@@ -44,7 +44,8 @@ List<String> _appsReturningNoTxnId = [
 ];
 
 List<String> _nonVerifiedApps = [
-  UpiApp.trueCallerUPI.packageName, // Reetesh: Repetitive mobile verification SMS failures
+  UpiApp.trueCallerUPI
+      .packageName, // Reetesh: Repetitive mobile verification SMS failures
   UpiApp.boiUpi.packageName, // Reetesh: Mobile number verification failed
   UpiApp.csbUpi.packageName, // Reetesh: Hangs on opening screen
   UpiApp.cubUpi.packageName,
@@ -56,7 +57,8 @@ List<String> _nonVerifiedApps = [
   UpiApp.rblPay.packageName, // Reetesh: Keeps looping in login screen
   UpiApp.realmePaySa.packageName, // Reetesh: Mobile number verification failed
   UpiApp.unitedUpiPay.packageName,
-  UpiApp.vijayaUpi.packageName, // Reetesh: Could never complete SMS Verification
+  UpiApp
+      .vijayaUpi.packageName, // Reetesh: Could never complete SMS Verification
 ];
 
 //List<String> _invalidApps = [
@@ -136,7 +138,7 @@ class UpiIndia {
   /// This method is used to initiate a transaction with given parameters.
   Future<UpiResponse> startTransaction({
     /// app refers to app name provided using [UpiApp] class.
-    required UpiApp app,
+    UpiApp? app,
 
     /// receiverUpiId is the UPI ID of the Payee (who will receive the money).
     /// Double check this value or you may end up paying the wrong person.
@@ -171,7 +173,8 @@ class UpiIndia {
     String? merchantId,
   }) {
     if (receiverUpiId.split("@").length != 2) {
-      return Future.error(UpiIndiaInvalidParametersException("Incorrect UPI ID provided"));
+      return Future.error(
+          UpiIndiaInvalidParametersException("Incorrect UPI ID provided"));
     }
 
 //    if (receiverAccountNumber != null && !RegExp(r'^\d{9,18}$').hasMatch(receiverAccountNumber)) {
@@ -201,11 +204,12 @@ class UpiIndia {
     }
 
     if (currency != "INR") {
-      return Future.error(UpiIndiaInvalidParametersException("Only INR is currently supported"));
+      return Future.error(UpiIndiaInvalidParametersException(
+          "Only INR is currently supported"));
     }
 
     return _channel.invokeMethod('startTransaction', {
-      "app": app.packageName,
+      "app": app?.packageName,
       'receiverUpiId': receiverUpiId,
       'receiverName': receiverName,
       'transactionRefId': transactionRefId,
